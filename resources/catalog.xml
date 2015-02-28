@@ -1,0 +1,4 @@
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <uri name="http://xmlcalabash.com/extension/steps/rdf-1.0.xpl"
+       uri="jar:file:lib/xmlcalabash1-rdf-VERSION.jar!/library.xpl"/>
+</catalog>
