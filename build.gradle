@@ -19,13 +19,21 @@ repositories {
   mavenCentral()
   maven { url "http://maven.restlet.org" }
   maven { url "http://developer.marklogic.com/maven2" }
+  maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+}
+
+configurations {
+  copydep {
+    extendsFrom runtime
+  }
+  copydep.exclude module: 'xmlcalabash'
 }
 
 dependencies {
   compile (
     [group: 'com.nwalsh', name: 'nwalsh-annotations', version: '1.0.0'],
-    [group: 'com.xmlcalabash', name: 'xmlcalabash', version: '1.0.29-96'],
-    [group: 'org.apache.jena', name: 'jena', version: '2.12.1'],
+    [group: 'com.xmlcalabash', name: 'xmlcalabash', version: '1.0.30-96'],
+    [group: 'org.apache.jena', name: 'jena', version: '2.12.1', transitive: false],
     [group: 'org.apache.jena', name: 'jena-arq', version: '2.12.1', transitive: false],
     [group: 'org.apache.jena', name: 'jena-core', version: '2.12.1', transitive: false],
     [group: 'org.apache.jena', name: 'jena-iri', version: '1.1.1', transitive: false],
@@ -40,8 +48,7 @@ project.ext.distVersion = version + snapshot
 version = project.ext.distVersion // - gets turned into . in some contexts
 
 task copyLib(type: Copy) {
-  FileCollection runtime  = configurations.runtime
-  FileCollection lib = runtime
+  FileCollection lib = configurations.copydep
   String path = ""
   lib.each {
     File file -> path += " lib/" + file.name
@@ -49,7 +56,6 @@ task copyLib(type: Copy) {
   project.ext.runtimeClasspath = path.trim()
 
   from lib
-  include "nwalsh-annotations**"
   into { "build/dist/lib" }
 }
 
