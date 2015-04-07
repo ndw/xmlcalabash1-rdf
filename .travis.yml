@@ -9,7 +9,9 @@ deploy:
   provider: releases
   api_key:
     secure: AO0Gn5joVkJ2d71ffauQtG3MGk+Cea5faEFMVP+5e712SJn0LFKR3SIzvfG4dFRgfi/VHPo/MO+4tLj2tfCm/fmtFn5gq81bQEWxdo159AwRqcZqiD9eZat6lHZBNydx6+90QA2sSawXeW+L/rXxPzRVQdf60bbgHGqRIKfQYwQ=
-  file: build/distributions/xmlcalabash1-rdf-$TRAVIS_TAG.zip
+  file:
+    - build/distributions/xmlcalabash1-rdf-$TRAVIS_TAG.zip
+    - build/libs/xmlcalabash1-rdf-$TRAVIS_TAG.jar
   on:
     tags: true
     all_branches: true
