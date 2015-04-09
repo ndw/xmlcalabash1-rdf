@@ -27,6 +27,10 @@ configurations {
     extendsFrom runtime
   }
   copydep.exclude module: 'xmlcalabash'
+  copydep.exclude module: 'nwalsh-annotations'
+  copydep.exclude module: 'httpclient'
+  copydep.exclude module: 'httpclient-cache'
+  copydep.exclude module: 'httpcore'
 }
 
 configurations.all {
@@ -40,11 +44,13 @@ configurations.all {
 dependencies {
   compile (
     [group: 'com.nwalsh', name: 'nwalsh-annotations', version: '1.0.0'],
-    [group: 'com.xmlcalabash', name: 'xmlcalabash', version: '1.0.30-96'],
+    [group: 'com.xmlcalabash', name: 'xmlcalabash', version: '1.1.0-95'],
     [group: 'org.apache.jena', name: 'jena', version: '2.12.1' ],
     [group: 'org.apache.jena', name: 'jena-arq', version: '2.12.1' ],
     [group: 'org.apache.jena', name: 'jena-core', version: '2.12.1' ],
-    [group: 'org.apache.jena', name: 'jena-iri', version: '1.1.1' ]
+    [group: 'org.apache.jena', name: 'jena-iri', version: '1.1.1' ],
+    [group: 'org.semarglproject', name: 'semargl-core', version: '0.6.1'],
+    [group: 'org.semarglproject', name: 'semargl-rdfa', version: '0.6.1']
   )
 }
 
@@ -62,6 +68,9 @@ task copyLib(type: Copy) {
     File file -> path += " lib/" + file.name
   }
   project.ext.runtimeClasspath = path.trim()
+
+  from lib
+  into { "build/dist/lib" }
 }
 
 task copyCatalog(type: Copy) {
@@ -71,9 +80,6 @@ task copyCatalog(type: Copy) {
 }
 
 jar {
-  into ('lib') {
-    from configurations.copydep
-  }
   from { ['build/catalog.xml', 'resources/library.xpl'] }
   manifest {
     instruction 'Built-By', builtBy
@@ -110,6 +116,12 @@ gradle.taskGraph.whenReady { taskGraph ->
         console.printf "\nThanks.\n\n"
     }
 }
+
+task copyNotices(type: Copy) {
+  from 'resources/notices'
+  into 'build/dist/docs/notices'
+}
+jar.dependsOn copyNotices
 
 task copyStuff(type: Copy) {
   from 'README.md'
