@@ -31,6 +31,15 @@ configurations {
   copydep.exclude module: 'httpclient'
   copydep.exclude module: 'httpclient-cache'
   copydep.exclude module: 'httpcore'
+  /* Exclude logging artifacts so they don't duplicate what's in XML Calabash */
+  copydep.exclude module: 'jcl-over-slf4j'
+  copydep.exclude module: 'log4j'
+  copydep.exclude module: 'log4j-api'
+  copydep.exclude module: 'log4j-core'
+  copydep.exclude module: 'log4j-slf4j-impl'
+  copydep.exclude module: 'org.restlet.ext.slf4j'
+  copydep.exclude module: 'slf4j-api'
+  copydep.exclude module: 'slf4j-log4j12'
 }
 
 configurations.all {
