@@ -163,6 +163,14 @@ task copyJavaDoc(dependsOn: javadoc, type: Copy) {
   into "build/dist/docs"
 }
 
+task testStep(type: JavaExec) {
+  classpath = configurations.copydep + configurations.runtime + sourceSets.main.output
+
+  main = 'com.xmlcalabash.drivers.Main'
+  maxHeapSize = "1024m"
+  args('-D', '-a', 'src/test/resources/test-pipeline.xpl')
+}
+
 task makeDist(dependsOn: [ build, copyJar, copyLib ]) << {
   println "Created distribution in build/dist"
 }
@@ -173,7 +181,7 @@ task zipDist(dependsOn: makeDist, type: Zip) {
   archiveName 'xmlcalabash1-rdf-' + distVersion + ".zip"
 }
 
-task dist(dependsOn: zipDist) << {
+task dist(dependsOn: [testStep, zipDist]) << {
   // nop
 }
 

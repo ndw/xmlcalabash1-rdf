@@ -1,0 +1,17 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
+         xmlns:air="http://www.megginson.com/exp/ns/airports#"
+         xmlns:con="http://www.w3.org/2000/10/swap/pim/contact#"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns:wot="http://xmlns.com/wot/0.1/"
+         xmlns:wn="http://xmlns.com/wordnet/1.6/"
+         xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+         xmlns:iso="http://www.daml.org/2001/09/countries/iso-3166-ont#"
+         xmlns:rss="http://purl.org/rss/1.0/"
+         xmlns:visit="http://purl.org/net/vocab/2004/07/visit#">
+   <foaf:Person rdf:about="http://norman.walsh.name/knows/who/norman-walsh">
+     <foaf:nick>norm</foaf:nick>
+     <foaf:homepage rdf:resource="http://nwalsh.com/"/>
+   </foaf:Person>
+</rdf:RDF>
