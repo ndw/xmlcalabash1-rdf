@@ -53,7 +53,7 @@ configurations.all {
 dependencies {
   compile (
     [group: 'com.nwalsh', name: 'nwalsh-annotations', version: '1.0.0'],
-    [group: 'com.xmlcalabash', name: 'xmlcalabash', version: '1.1.0-95'],
+    [group: 'com.xmlcalabash', name: 'xmlcalabash', version: '1.1.1-95'],
     [group: 'org.apache.jena', name: 'jena', version: '2.12.1' ],
     [group: 'org.apache.jena', name: 'jena-arq', version: '2.12.1' ],
     [group: 'org.apache.jena', name: 'jena-core', version: '2.12.1' ],
@@ -82,14 +82,7 @@ task copyLib(type: Copy) {
   into { "build/dist/lib" }
 }
 
-task copyCatalog(type: Copy) {
-  from 'resources/catalog.xml'
-  into 'build'
-  filter { String line -> line.replaceAll('VERSION', distVersion) }
-}
-
 jar {
-  from { ['build/catalog.xml', 'resources/library.xpl'] }
   manifest {
     instruction 'Built-By', builtBy
     instruction 'Implementation-Vendor', 'Norman Walsh'
@@ -108,7 +101,6 @@ jar {
     instruction 'Class-Path', project.ext.runtimeClasspath + " lib"
   }
 }
-jar.dependsOn copyCatalog
 
 // I refuse to put my PGP password in a file, so there's no way to
 // make this work from a CI environment.

@@ -20,6 +20,7 @@ import com.xmlcalabash.runtime.XAtomicStep;
 import com.xmlcalabash.util.AxisNodes;
 import com.xmlcalabash.util.S9apiUtils;
 import com.xmlcalabash.util.TreeWriter;
+import com.xmlcalabash.util.XProcURIResolver;
 import net.sf.saxon.s9api.Axis;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -28,7 +29,16 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.system.ErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.sax.SAXSource;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Random;
@@ -56,6 +66,8 @@ public class RDFStep extends DefaultStep {
     protected static final QName _language = new QName("", "language");
     protected static final QName _max_triples = new QName("", "max-triples-per-document");
 
+    protected static final String library_xpl = "http://xmlcalabash.com/extension/steps/rdf.xpl";
+
     protected static Pattern[] patterns = new Pattern[] {
             Pattern.compile("&"), Pattern.compile("<"), Pattern.compile(">") };
 
@@ -70,7 +82,6 @@ public class RDFStep extends DefaultStep {
 
     protected Dataset dataset = DatasetFactory.createMem();
     protected HashMap<String,AnonId> anonids = new HashMap<String, AnonId> ();
-
 
     public RDFStep(XProcRuntime runtime, XAtomicStep step) {
         super(runtime,step);

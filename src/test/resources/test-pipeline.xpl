@@ -7,7 +7,7 @@
 <p:output port="result"/>
 <p:serialization port="result" indent="true"/>
 
-<p:import href="../../../resources/library.xpl"/>
+<p:import href="http://xmlcalabash.com/extension/steps/rdf.xpl"/>
 
 <cx:rdfa name="rdfa">
   <p:input port="source">

@@ -10,6 +10,7 @@ import com.xmlcalabash.library.DefaultStep;
 import com.xmlcalabash.runtime.XAtomicStep;
 import com.xmlcalabash.util.S9apiUtils;
 import com.xmlcalabash.util.TreeWriter;
+import com.xmlcalabash.util.XProcURIResolver;
 import net.sf.saxon.s9api.Axis;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -20,10 +21,21 @@ import org.semarglproject.rdf.ParseException;
 import org.semarglproject.rdf.rdfa.RdfaParser;
 import org.semarglproject.sink.TripleSink;
 import org.semarglproject.source.StreamProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.sax.SAXSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Random;
 import java.util.Vector;
@@ -44,7 +56,7 @@ public class RDFa extends RDFStep {
     private long count = 0;
 
     public RDFa(XProcRuntime runtime, XAtomicStep step) {
-        super(runtime,step);
+        super(runtime, step);
     }
 
     public void run() throws SaxonApiException {
@@ -210,6 +222,49 @@ public class RDFa extends RDFStep {
                         + "/" + uri;
             } else {
                 return uri;
+            }
+        }
+    }
+
+    public static void configureStep(XProcRuntime runtime) {
+        XProcURIResolver resolver = runtime.getResolver();
+        URIResolver uriResolver = resolver.getUnderlyingURIResolver();
+        URIResolver myResolver = new StepResolver(uriResolver);
+        resolver.setUnderlyingURIResolver(myResolver);
+    }
+
+    private static class StepResolver implements URIResolver {
+        Logger logger = LoggerFactory.getLogger(RDFa.class);
+        URIResolver nextResolver = null;
+
+        public StepResolver(URIResolver next) {
+            nextResolver = next;
+        }
+
+        @Override
+        public Source resolve(String href, String base) throws TransformerException {
+            try {
+                URI baseURI = new URI(base);
+                URI xpl = baseURI.resolve(href);
+                if (library_xpl.equals(xpl.toASCIIString())) {
+                    URL url = RDFa.class.getResource("/library.xpl");
+                    logger.debug("Reading library.xpl for cx:rdfa from " + url);
+                    InputStream s = RDFa.class.getResourceAsStream("/library.xpl");
+                    if (s != null) {
+                        SAXSource source = new SAXSource(new InputSource(s));
+                        return source;
+                    } else {
+                        logger.info("Failed to read library.xpl for cx:rdfa");
+                    }
+                }
+            } catch (URISyntaxException e) {
+                // nevermind
+            }
+
+            if (nextResolver != null) {
+                return nextResolver.resolve(href, base);
+            } else {
+                return null;
             }
         }
     }
