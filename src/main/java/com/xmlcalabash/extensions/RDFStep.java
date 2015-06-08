@@ -67,6 +67,7 @@ public class RDFStep extends DefaultStep {
     protected static final QName _max_triples = new QName("", "max-triples-per-document");
 
     protected static final String library_xpl = "http://xmlcalabash.com/extension/steps/rdf.xpl";
+    protected static final String library_url = "/com/xmlcalabash/extensions/rdf/library.xpl";
 
     protected static Pattern[] patterns = new Pattern[] {
             Pattern.compile("&"), Pattern.compile("<"), Pattern.compile(">") };

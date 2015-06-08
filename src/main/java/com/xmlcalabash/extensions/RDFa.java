@@ -247,14 +247,14 @@ public class RDFa extends RDFStep {
                 URI baseURI = new URI(base);
                 URI xpl = baseURI.resolve(href);
                 if (library_xpl.equals(xpl.toASCIIString())) {
-                    URL url = RDFa.class.getResource("/library.xpl");
+                    URL url = RDFa.class.getResource(library_url);
                     logger.debug("Reading library.xpl for cx:rdfa from " + url);
-                    InputStream s = RDFa.class.getResourceAsStream("/library.xpl");
+                    InputStream s = RDFa.class.getResourceAsStream(library_url);
                     if (s != null) {
                         SAXSource source = new SAXSource(new InputSource(s));
                         return source;
                     } else {
-                        logger.info("Failed to read library.xpl for cx:rdfa");
+                        logger.info("Failed to read " + library_url + " for cx:rdfa");
                     }
                 }
             } catch (URISyntaxException e) {

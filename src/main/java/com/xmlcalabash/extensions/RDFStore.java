@@ -191,14 +191,14 @@ public class RDFStore extends RDFStep {
                 URI baseURI = new URI(base);
                 URI xpl = baseURI.resolve(href);
                 if (library_xpl.equals(xpl.toASCIIString())) {
-                    URL url = RDFStore.class.getResource("/library.xpl");
+                    URL url = RDFStore.class.getResource(library_url);
                     logger.debug("Reading library.xpl for cx:rdf-store from " + url);
-                    InputStream s = RDFStore.class.getResourceAsStream("/library.xpl");
+                    InputStream s = RDFStore.class.getResourceAsStream(library_url);
                     if (s != null) {
                         SAXSource source = new SAXSource(new InputSource(s));
                         return source;
                     } else {
-                        logger.info("Failed to read library.xpl for cx:rdf-store");
+                        logger.info("Failed to read " + library_url + " for cx:rdf-store");
                     }
                 }
             } catch (URISyntaxException e) {

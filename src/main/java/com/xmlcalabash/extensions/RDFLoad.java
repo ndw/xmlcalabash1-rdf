@@ -134,14 +134,14 @@ public class RDFLoad extends RDFStep {
                 URI baseURI = new URI(base);
                 URI xpl = baseURI.resolve(href);
                 if (library_xpl.equals(xpl.toASCIIString())) {
-                    URL url = RDFLoad.class.getResource("/library.xpl");
+                    URL url = RDFLoad.class.getResource(library_url);
                     logger.debug("Reading library.xpl for cx:rdf-load from " + url);
-                    InputStream s = RDFLoad.class.getResourceAsStream("/library.xpl");
+                    InputStream s = RDFLoad.class.getResourceAsStream(library_url);
                     if (s != null) {
                         SAXSource source = new SAXSource(new InputSource(s));
                         return source;
                     } else {
-                        logger.info("Failed to read library.xpl for cx:rdf-load");
+                        logger.info("Failed to read " + library_url + " for cx:rdf-load");
                     }
                 }
             } catch (URISyntaxException e) {
