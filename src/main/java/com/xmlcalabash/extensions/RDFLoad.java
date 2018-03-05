@@ -51,6 +51,8 @@ import java.util.Iterator;
 public class RDFLoad extends RDFStep {
     /**
      * Creates a new instance of Identity
+     * @param runtime The XProc runtime
+     * @param step The step
      */
     public RDFLoad(XProcRuntime runtime, XAtomicStep step) {
         super(runtime, step);

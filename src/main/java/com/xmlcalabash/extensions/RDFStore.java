@@ -50,6 +50,8 @@ public class RDFStore extends RDFStep {
 
     /**
      * Creates a new instance of Identity
+     * @param runtime The XProc runtime
+     * @param step The step
      */
     public RDFStore(XProcRuntime runtime, XAtomicStep step) {
         super(runtime,step);
