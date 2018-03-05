@@ -1,8 +1,6 @@
-import groovy.swing.SwingBuilder
-import java.awt.Point
-
 buildscript {
   repositories {
+    mavenLocal()
     mavenCentral()
   }
 
@@ -15,10 +13,12 @@ plugins {
   id "java"
   id "osgi"
   id "maven"
+  id "maven-publish"
   id "signing"
 }
 
 repositories {
+  mavenLocal()
   mavenCentral()
   maven { url "http://maven.restlet.org" }
   maven { url "http://developer.marklogic.com/maven2" }
@@ -45,18 +45,10 @@ configurations {
   copydep.exclude module: 'slf4j-log4j12'
 }
 
-configurations.all {
-  resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-    if (details.requested.name == 'saxon' && details.requested.version == '8.7') {
-      details.useTarget "net.sf.saxon:Saxon-HE:" + saxonVersion
-    }
-  }
-}
-
 dependencies {
   compile (
     [group: 'com.nwalsh', name: 'nwalsh-annotations', version: '1.0.0'],
-    [group: 'com.xmlcalabash', name: 'xmlcalabash', version: '1.1.1-95'],
+    [group: 'com.xmlcalabash', name: 'xmlcalabash', version: xmlCalabashVersion],
     [group: 'org.apache.jena', name: 'jena', version: '2.12.1' ],
     [group: 'org.apache.jena', name: 'jena-arq', version: '2.12.1' ],
     [group: 'org.apache.jena', name: 'jena-core', version: '2.12.1' ],
@@ -150,8 +142,10 @@ task testStep(type: JavaExec) {
   args('-D', '-a', 'src/test/resources/test-pipeline.xpl')
 }
 
-task makeDist(dependsOn: [ build, copyJar, copyLib ]) << {
-  println "Created distribution in build/dist"
+task makeDist(dependsOn: [ build, copyJar, copyLib ]) {
+  doLast {
+    println "Created distribution in build/dist"
+  }
 }
 
 task zipDist(dependsOn: makeDist, type: Zip) {
@@ -160,7 +154,7 @@ task zipDist(dependsOn: makeDist, type: Zip) {
   archiveName 'xmlcalabash1-rdf-' + distVersion + ".zip"
 }
 
-task dist(dependsOn: [testStep, zipDist]) << {
+task dist(dependsOn: [testStep, zipDist]) {
   // nop
 }
 
@@ -174,54 +168,19 @@ signing {
   sign configurations.archives
 }
 
-// I refuse to put my PGP password in a file.
-//
-// Adapted from
-// https://www.timroes.de/2014/01/19/using-password-prompts-with-gradle-build-files/
-//
-// N.B. This can't work in a CI environment so there's no way to
-// automatically publish the artifacts from, for example, Travis CI.
-//
-gradle.taskGraph.whenReady { taskGraph ->
-  if(taskGraph.hasTask(':uploadArchives')) {
-
-    def pass = ''
-    if(System.console() == null) {
-      new SwingBuilder().edt {
-        dialog(modal: true,
-            title: 'Enter password',
-            alwaysOnTop: true,
-            resizable: false,
-            locationRelativeTo: null,
-            locationByPlatform: true,
-            // On my Linux multi-monitor setup, the dialog "appears" at
-            // the top of the virtual desktop below my desktop. So move
-            // the damned thing somewhere visible. Meh.
-            location: new Point(100,100),
-            pack: true,
-            show: true
-        ) {
-          vbox { //
-            label(text: "Please enter key passphrase:")
-            input = passwordField()
-            button(defaultButton: true, text: 'OK', actionPerformed: {
-              pass = input.password;
-              dispose();
-            })
-          }
-        }
-      }
-    } else {
-      pass = System.console().readPassword("\nPlease enter key passphrase: ")
-      pass = new String(pass)
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      groupId group
+      artifactId 'xmlcalabash1-rdf'
+      version version
+      from components.java
     }
-
-    if (pass.size() <= 0) {
-      throw new InvalidUserDataException("You must enter a password to proceed.")
+  }
+  repositories {
+    maven {
+      url 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
     }
-
-    allprojects { ext."signing.password" = pass }
-
   }
 }
 
