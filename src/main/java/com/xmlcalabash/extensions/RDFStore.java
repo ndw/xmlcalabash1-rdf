@@ -1,27 +1,18 @@
 package com.xmlcalabash.extensions;
 
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.hp.hpl.jena.vocabulary.RDFS;
 import com.xmlcalabash.core.XMLCalabash;
 import com.xmlcalabash.core.XProcConstants;
 import com.xmlcalabash.core.XProcException;
 import com.xmlcalabash.core.XProcRuntime;
 import com.xmlcalabash.runtime.XAtomicStep;
-import com.xmlcalabash.util.Base64;
 import com.xmlcalabash.util.TreeWriter;
+import com.xmlcalabash.util.URIUtils;
 import com.xmlcalabash.util.XProcURIResolver;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RiotReader;
-import org.apache.jena.riot.lang.LangRIOT;
-import org.apache.jena.riot.system.ErrorHandler;
-import org.apache.jena.riot.system.ParserProfile;
-import org.apache.jena.riot.system.RiotLib;
-import org.apache.jena.riot.system.StreamRDF;
-import org.apache.jena.riot.system.StreamRDFLib;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -36,12 +27,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Iterator;
 
 /**
  * Created by IntelliJ IDEA.
@@ -121,7 +110,7 @@ public class RDFStore extends RDFStep {
                 baos = new ByteArrayOutputStream();
                 outstr = baos;
             } else if (href.getScheme().equals("file")) {
-                File output = new File(href);
+                File output = URIUtils.toFile(href);
 
                 File path = new File(output.getParent());
                 if (!path.isDirectory()) {
